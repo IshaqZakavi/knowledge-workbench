@@ -1,4 +1,4 @@
-"""Read-only stdio tools for the fictional bundled corpus only."""
+"""Read-only stdio tools for the reviewed public template checkout."""
 import argparse
 from typing import Any
 
@@ -14,7 +14,7 @@ def make_server(semantic: bool = False, local_only: bool = False) -> FastMCP:
     notes = load_corpus()
     graph = build_graph(notes)
     search = Search(notes, semantic=semantic, local_only=local_only)
-    server = FastMCP("knowledge-workbench-demo")
+    server = FastMCP("knowledge-work-template")
     hints = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
 
     @server.tool(annotations=hints)
@@ -24,12 +24,22 @@ def make_server(semantic: bool = False, local_only: bool = False) -> FastMCP:
 
     @server.tool(annotations=hints)
     def read_note(note_id: str) -> dict[str, Any]:
-        """Read a note by its known ID. Paths, URLs and arbitrary files are not accepted."""
+        """Read a known record ID. No arbitrary filesystem or URL reads."""
         if note_id not in notes:
             raise ValueError("Unknown note id")
         note = notes[note_id]
         return {"id": note.id, "title": note.title, "body": note.body, "source": note.path,
-                "origin": note.origin, "related": note.related, "fictional": True}
+                "origin": note.origin, "supporting": note.supporting,
+                "related": note.related, "status": note.metadata["status"]}
+
+    @server.tool(annotations=hints)
+    def list_records(record_type: str = "", status: str = "") -> dict[str, Any]:
+        """Inspect authored goals, work items, processes and notes. Does not execute work."""
+        return {"records": [{"id": n.id, "title": n.title, "type": n.metadata.get("type"),
+                             "status": n.metadata["status"], "source": n.path}
+                            for n in notes.values()
+                            if (not record_type or n.metadata.get("type") == record_type)
+                            and (not status or n.metadata["status"] == status)]}
 
     @server.tool(annotations=hints)
     def graph_context(node_id: str, hops: int = 1) -> dict[str, Any]:
@@ -38,7 +48,7 @@ def make_server(semantic: bool = False, local_only: bool = False) -> FastMCP:
 
     @server.tool(annotations=hints)
     def source_lineage(note_id: str) -> dict[str, Any]:
-        """Follow explicit upstream source links, not general relatedness."""
+        """Follow origin and explicit supporting evidence, not general relatedness."""
         if note_id not in notes:
             raise ValueError("Unknown note id")
         return graph.lineage(note_id)

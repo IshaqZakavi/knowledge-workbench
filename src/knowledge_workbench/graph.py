@@ -61,37 +61,53 @@ class PKMGraph:
         return sorted(edges, key=lambda e: (e["source"], e["target"], e["edge_type"], e["source_path"]))
 
     def lineage(self, note_id: str) -> dict:
-        """Follow child -> origin only. A related note is not automatically a source."""
+        """Follow origin and explicit supporting evidence, not general relatedness."""
         self.get_node(note_id)
         origins = nx.DiGraph()
         origins.add_nodes_from(self.G.nodes)
-        origins.add_edges_from((a, b) for a, b, d in self.G.edges(data=True) if d["edge_type"] == "origin")
+        evidence = {"origin", "supporting"}
+        origins.add_edges_from((a, b) for a, b, d in self.G.edges(data=True) if d["edge_type"] in evidence)
         if not nx.is_directed_acyclic_graph(origins):
             raise ValueError("Source lineage contains a cycle")
         ids = {note_id} | nx.descendants(origins, note_id)
-        edges = [e for e in self._edges(self.G.subgraph(ids)) if e["edge_type"] == "origin"]
+        edges = [e for e in self._edges(self.G.subgraph(ids)) if e["edge_type"] in evidence]
         return {"nodes": [self.get_node(n) for n in sorted(ids)], "edges": edges}
 
 
 def build_graph(notes: dict[str, Note]) -> PKMGraph:
     graph = PKMGraph()
-    people = {p for note in notes.values() for p in note.contributors}
+    people = {note.metadata["name"] for note in notes.values()
+              if note.metadata.get("entity_type") == "person"}
     for person in sorted(people):
         graph.add_node("person:" + person, "person", person)
     for note in notes.values():
-        graph.add_node(note.id, "note", note.title, tier=note.tier, path=note.path, date=note.date)
+        graph.add_node(note.id, note.metadata.get("type", "note"), note.title,
+                       tier=note.tier, path=note.path, date=note.date,
+                       status=note.metadata["status"])
     for note in notes.values():
-        for relation, targets in (("origin", note.origin), ("related", note.related)):
+        for relation, targets in note.metadata["resolved_references"].items():
             for target in targets:
-                graph.add_edge(note.id, target, relation, source_path=note.id)
+                graph.add_edge(note.id, target, relation, source_path=note.path)
         for person in note.contributors:
-            graph.add_edge("person:" + person, note.id, "contributed_to", source_path=note.id)
+            if person in people:
+                graph.add_edge("person:" + person, note.id, "contributed_to", source_path=note.path)
+        owner = note.metadata.get("owner")
+        if owner in people:
+            graph.add_edge("person:" + owner, note.id, "owns_record", source_path=note.path)
+        if note.metadata.get("entity_type") == "person":
+            graph.add_edge(note.id, "person:" + note.metadata["name"], "describes", source_path=note.path)
         # Raw records are evidence, not an extra set of interpreted decisions.
         if note.tier == "curated":
             _enrich_note_with_structured_items(
                 graph, note.id, note.title, note.date, note.body,
-                lambda value: "person:" + value if value in note.contributors else None,
+                lambda value: "person:" + value if value in people and value in note.contributors else None,
             )
+    for _, _, edge in graph.G.edges(data=True):
+        if edge["source_path"] in notes:
+            edge["source_path"] = notes[edge["source_path"]].path
+    for _, data in graph.G.nodes(data=True):
+        if data.get("note_path") in notes:
+            data["note_path"] = notes[data["note_path"]].path
     for note_id in notes:
         graph.lineage(note_id)  # Fail closed on cyclic provenance.
     return graph

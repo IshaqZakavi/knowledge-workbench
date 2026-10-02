@@ -1,122 +1,131 @@
-# Knowledge Workbench
+# An agentic operating system for knowledge work
 
-**Why did we make that decision, who is doing the next step, and where is the source?**
+A reusable template for turning source material into reviewed knowledge,
+connected work and grounded outputs. The aim is to retain enough context to
+answer: **What did we decide, why, what changed, and what needs attention next?**
 
-This small Python example makes those questions inspectable. It searches notes,
-connects people to explicitly recorded actions, and follows a summary back to its
-source. It is adapted from my personal agentic knowledge-system template.
+This is a public selection from my personal knowledge-management project. Its
+core is the folder structure, record contracts and working methods below.
+Search and the relationship graph help an assistant use that structure.
 
-The six bundled notes describe a **fictional music-production session**. No client
-records, personal conversations, recordings or private vault content are included.
+## Start with the system
 
-Start with the [five-minute walkthrough](docs/walkthrough.md), or read
-[the design and its limits](docs/design.md). The [provenance note](docs/provenance.md)
-distinguishes existing template code from work added for this public example.
-See [verification and an observed retrieval miss](docs/verification.md) for the
-checks performed and what they do not establish.
+- [The mental model](docs/mental-model.md): why the layers exist and what each keeps.
+- [Folder structure](docs/folder-structure.md): the original template and its later five-stage vault form.
+- [A complete worked flow](docs/walkthrough.md): source, curation, work, review and output.
+- [Learning and inquiry](docs/learning-and-inquiry.md): a recovered design for turning capture into understanding.
+- [Architecture and capability map](docs/capability-map.md): what runs here, what is a workflow, and what belongs to the larger implementation.
 
-## What you can inspect
+## The structure is part of the design
 
-| Question | Mechanism | Evidence returned |
-| --- | --- | --- |
-| Where is revision `LS-014` mentioned? | Keyword search | Exact matching notes and ranks |
-| Why retain the ability to change individual parts? | Optional local vector search + rank fusion | Results with separate keyword and semantic ranks |
-| What is Avery responsible for? | Typed relationship graph | Explicit owner annotations, action state and source note |
-| What supports the listening-copy status? | Directed source-lineage traversal | Work product, interpretation and original record |
+```text
+notes/
+  raw/
+    .originals/          Permitted original artifacts, kept separate from extracted text
+  curated/               Comprehensive structured records, mirrored to their raw source
+  atomic/                Selective reusable ideas; most curated notes produce none
+reference/
+  people/                Authored identity, aliases, context and provisional hypotheses
+  processes/             Expected stages, roles, gates, tools and exceptions
+  process-runs/          What happened in a particular execution
+  terms/                 Shared vocabulary and ontology
+  entities/              Other durable identities
+  architecture-patterns/ Reusable design decisions, forces and consequences
+goals/                   Outcomes and acceptance criteria
+backlog-items/           Durable work threads under goals
+work-items/              Accepted active work, with ownership and evidence
+work-products/           Briefs, reports and other audience-specific outputs
+context/manifests/       Sources selected for a particular question
+published/               Reviewed outward-sharing manifests, exports and consumers
+ops/                     Proposed changes and pending external actions
+.claude/skills/          Selected agent working methods
+schema/                  Frontmatter contract selected from the original template
+src/knowledge_workbench/ Read-only example mechanics, not the full private runtime
+```
 
-Keyword and semantic ranks combine through reciprocal rank fusion. Graph
-traversal is a separate, complementary operation. A relationship is not treated
-as an extra similarity score or automatic proof of a claim.
+The main route is `raw -> curated -> work-products`. Atomic notes are a
+**selective branch**, not a mandatory summarization step. References and work
+records are maintained alongside those layers.
 
-## Run it
+The later implementation arranges each domain into `1-original`, `2-raw`,
+`3-curated`, `4-atomic` and `5-work-products`, with a shared protocol and separate
+vaults. [The mapping](docs/folder-structure.md) explains both manifestations of
+the same project without pretending they use an identical schema or backend.
 
-Python 3.11 or newer:
+## What becomes possible
+
+- Prepare for a discussion with recent decisions, unresolved work and relevant
+  person context, while keeping observations separate from hypotheses.
+- Produce a status brief for the question being asked now, drawing on goals,
+  tasks, process runs and source evidence instead of maintaining a disconnected
+  report by hand.
+- Trace a recommendation through reviewed interpretation to the source, then
+  revisit it when its assumptions change.
+- Compare an expected process with observed runs before proposing an improvement.
+- Reuse the methodology across projects while keeping their content and sharing
+  boundaries distinct.
+
+These are supported workflow purposes. This release makes no quantified
+productivity claim and does not include every private runtime capability.
+
+## Follow the fictional pilot
+
+Read the
+[kickoff source](notes/raw/transcript-2026-01-12-knowledge-pilot.md), its
+[curated record](notes/curated/transcript-2026-01-12-knowledge-pilot-CURATED.md),
+the [goal](goals/reviewable-pilot.md), the
+[observed process run](reference/process-runs/pilot-review.md) and the
+[decision brief](work-products/knowledge-pilot/decision-brief.md).
+
+Two sources have two mirrored curated records. One idea earns an atomic note;
+the coordination update does not. The brief stays in draft because source review
+and approval ownership are unresolved. Every person and event is invented.
+
+## Inspect it locally
+
+This is a repository template. Use an **editable installation** so the runtime
+reads the visible layer folders rather than a second hidden copy of the notes.
+Python 3.11 or newer is required.
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[test]'
-knowledge-demo --query 'LS-014'
+knowledge-demo --validate
+knowledge-demo --query 'Why was audio deferred?'
 python -m pytest -q
 ```
 
-That path uses keyword retrieval and the graph, with **no model or API key**.
-The output explicitly says `"mode": "keyword"`.
-
-For actual hybrid retrieval:
+Optional local semantic retrieval:
 
 ```bash
 python -m pip install -e '.[semantic]'
-knowledge-demo --semantic --query 'Why retain the ability to adjust individual musical parts?'
+knowledge-demo --semantic --query 'What prevents approval of the pilot brief?'
 ```
 
-The first semantic run downloads the pinned `all-MiniLM-L6-v2` model from
-Hugging Face. Embeddings are computed locally on CPU. Model files are not part of
-this repository. Once cached, add `--local-only` to prohibit model downloads.
-There is no cloud inference service or generated-answer step in this demo.
+The first semantic run downloads a pinned Sentence Transformers model. Embedding
+inference then runs locally on CPU. After caching it, add `--local-only` to
+prevent model downloads. The default path needs no model or API key and reports
+`mode: keyword`; the semantic path reports `mode: hybrid`.
 
-## Use it through MCP
+A read-only stdio MCP server is available as `knowledge-mcp`. See
+[MCP and skills](docs/mcp-and-skills.md) for setup and workflows. The public
+adapter supports search, record reading/listing, graph context and source
+lineage. It does not autonomously curate notes, execute tasks or publish outputs.
 
-After installation, configure an MCP client to launch the absolute path to the
-virtual environment's `knowledge-mcp` executable. This is a **stdio** server.
-It does not open an HTTP endpoint.
+## How much of the larger system is here?
 
-```json
-{
-  "mcpServers": {
-    "knowledge-workbench-demo": {
-      "command": "/absolute/path/to/knowledge-workbench/.venv/bin/knowledge-mcp",
-      "args": []
-    }
-  }
-}
-```
+The public template includes selected record contracts, working methods,
+fictional examples and a small verified Python adapter. The larger project also
+has persistent retrieval stores, richer people/process tools, work execution,
+knowledge-intelligence pipelines and operational traces. The
+[capability map](docs/capability-map.md) distinguishes those from this release.
 
-To enable hybrid search, install the semantic extra and use
-`"args": ["--semantic", "--local-only"]` after caching the model.
+[Provenance](docs/provenance.md) explains the selection and adaptation.
+[Verification](docs/verification.md) explains what has been exercised.
+[Sharing boundaries](docs/sharing-and-trust.md) explains why a private knowledge
+system and its public outputs need different surfaces.
 
-Four read-only tools are available:
-
-- `search_notes(query, limit)` returns ranked notes and rank provenance.
-- `read_note(note_id)` reads a known bundled note ID, never an arbitrary path.
-- `graph_context(node_id, hops)` explores up to three hops of explicit relationships.
-- `source_lineage(note_id)` follows upstream `origin` links only.
-
-Try asking a connected assistant:
-
-> Find the decision about separate stems, identify the remaining actions and
-> their owners, and trace the decision to its original source. Distinguish open
-> tasks from completed ones. Cite note IDs and do not infer release permission.
-
-The assistant supplies the language-model behavior. This server supplies the
-records. Retrieved text remains untrusted data, even when it comes from a note.
-
-## Boundaries
-
-This is a public code sample, not a production knowledge platform or a music
-generation product. It demonstrates a narrow part of a larger personal system.
-It does not implement tenant authentication, comprehensive sharing enforcement,
-recording ingestion, automatic social inference, a goal scheduler or a publish
-approval workflow. Six invented notes are not a retrieval benchmark.
-
-The full template uses a persistent search index. This small example uses an
-in-memory lexical index, optional local vectors and a NetworkX graph so the
-behavior is easy to inspect. See [design tradeoffs](docs/design.md).
-
-## Repository map
-
-```text
-src/knowledge_workbench/
-  data/           Six fictional notes, with explicit source references
-  extraction.py   Selected and adapted structured-note extraction functions
-  graph.py        Typed relationships and directional lineage
-  retrieval.py    Keyword search, optional embeddings and rank fusion
-  server.py       Four read-only MCP tools
-  cli.py          Reproducible walkthrough output
-tests/            Retrieval, lineage, action ownership and real MCP transport checks
-docs/             Walkthrough, design and adaptation provenance
-```
-
-Publicly viewable source by Ishaq Zakavi. No open-source license is granted by
-this release; see [COPYRIGHT](COPYRIGHT). Third-party dependencies retain their
-own licenses. No model weights or third-party tutorial text are redistributed.
+No real client records, recordings, relationship profiles or private Git history
+are included. Source is publicly viewable, with copyright retained under
+[COPYRIGHT](COPYRIGHT); this release does not grant an open-source license.

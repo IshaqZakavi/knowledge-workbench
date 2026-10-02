@@ -1,42 +1,34 @@
-# What this public sample contains
+# Selection and adaptation
 
-This repository is adapted from Ishaq Zakavi's existing personal knowledge-system
-template. It is a fresh public sample, not a copy of a private vault or its Git
-history. No employer or client code is intentionally included.
+This repository is a public selection from Ishaq Zakavi's personal knowledge-work project, which developed through a project-oriented Python template, a shared TypeScript protocol and workspace-specific vaults. Those are manifestations of one project, not three unrelated portfolio projects.
 
-## Carried over and adapted
+The public repository has its own Git history. Private vaults, personal records and source-repository history were not copied into it.
 
-- Structured note extraction: Markdown section detection, list and checkbox
-  parsing, typed decision/risk/action extraction, explicit person annotations
-  and source-linked graph enrichment.
-- Graph primitives for typed nodes, relationships and source references.
-- The reciprocal-rank-fusion approach used to combine retrieval channels.
-- The source/curated/atomic/work-product model and distinction between evidence
-  and related context.
+## Preserved from the original method
 
-## Added or changed for this release
+- The raw, curated, selective atomic and work-product layers, including original artifacts separated from extracted text and mirrored curated filenames.
+- Comprehensive curation as the primary foundation for outputs. Atomic notes are a selective branch.
+- Authored people, processes, process runs, vocabulary and architecture patterns.
+- Goals, durable work threads, active work, context bundles and explicit publishing boundaries from the operator-system design.
+- The frontmatter schema, with its private project registry replaced by one fictional project.
+- Selected working methods, rewritten to match the smaller public surface and its actual commands.
 
-- A six-note fictional corpus about a music-production session.
-- A small package, loader, CLI and four-tool read-only MCP surface.
-- An in-memory lexical index and optional local embedding adapter. The larger
-  template's persistent LanceDB indexing implementation is not included.
-- Multiple predicates between the same graph nodes, directional lineage and
-  deduplicated traversal with explicit bounds.
-- Transparent one-based rank components, without the template's tier and
-  recency weighting.
-- Narrower person linking through explicit assignments. Agreement or a mention
-  is not promoted to leadership or responsibility.
-- Tests, walkthrough and design documentation.
+## Code selected or adapted
 
-The public adaptation, documentation and tests were prepared with AI assistance.
-This release should not be represented as a historical snapshot of a previously
-deployed product or as evidence of production scale.
+Markdown section and list parsing, typed action/decision/risk extraction and source-linked graph enrichment were selected from the original Python implementation. Graph primitives and rank fusion were adapted for a small inspectable example.
 
-## Deliberately excluded
+The public loader, repository layout integration, CLI, lexical adapter, optional local embedding path, five-tool read-only MCP surface and tests were assembled for this release. The adapter uses NetworkX and in-memory retrieval. It is not the original persistent LanceDB search engine or the later TypeScript control plane.
 
-Private notes, names, recordings, relationship hypotheses, client examples,
-proprietary vocabulary, internal agent instructions, credentials, model caches,
-private Git history and research compilations containing third-party material.
+Two explicit adaptations matter: `supporting` is treated as evidence while `related` remains wider context, and ownership requires an explicit assignment linked to an authored person. The original composition guidance also used `related` to list sources. The public distinction is intentionally stricter.
 
-There is no real customer data behind the synthetic example. Its numbers and
-states are fixtures, not performance metrics or outcomes.
+## New fictional records
+
+The fifteen records demonstrate a knowledge-work pilot, including two raw sources, two curated mirrors, one atomic idea, people, a process and partial run, a term, a pattern, a goal, a backlog item, an active work item and a draft brief. Names, dates, events and states are invented fixtures. No outcome metric is claimed.
+
+The documentation, public adaptations and tests were prepared with AI assistance. This release is not a historical snapshot of a deployed product. The [capability map](capability-map.md) distinguishes runnable mechanics, authored workflow examples and broader design or implementation.
+
+## Excluded material
+
+Real notes, recordings, relationship profiles, private hypotheses, customer data, employer or client materials, private vocabulary, credentials, model caches and private Git history are excluded. Research compilations containing third-party material were used only to identify context and were not republished.
+
+Source visibility does not grant an open-source license. See [COPYRIGHT](../COPYRIGHT).

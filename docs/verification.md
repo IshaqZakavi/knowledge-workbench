@@ -1,47 +1,57 @@
 # Checks and observed limits
 
-Checked locally on October 2, 2026 with Python 3.12.14, NetworkX 3.7, PyYAML 6.0.3,
-MCP Python SDK 1.30.0, pytest 9.1.1 and Sentence Transformers 5.7.0.
-The MCP SDK is intentionally constrained to the supported v1 interface used by
-the source template; this sample has not been migrated to v2.
+Checked locally on October 2, 2026 with Python 3.12.14. The fifteen fictional
+records load from the visible repository folders, not a package-internal corpus.
 
 ## Automated checks
 
-The test suite covers eleven cases, including a real stdio MCP client/server
-exchange rather than mocked tool calls:
+Seventeen tests pass, including a real stdio MCP client/server exchange:
 
-- Directed source lineage, including two paths to the same upstream note.
-- Multiple predicates between the same graph nodes and deduplicated traversal.
-- Explicit ownership and checked/open action state without inferring an owner.
-- Exact identifier retrieval and channel-by-channel rank-fusion contributions.
-- Cyclic source rejection, traversal bounds and invalid query rejection.
-- Symlink and unresolved-source rejection during corpus loading.
-- All four MCP tools and rejection of path/URL inputs to the note reader.
+- Mirrored curation, required schema fields and curated origins for atomic notes.
+- Two sources and curated records, with one selective atomic branch.
+- Directed source lineage through origin and supporting evidence, excluding related goals and backlog context.
+- Multiple graph predicates, explicit ownership and open/completed action states.
+- Goal, active work and process-run links without merging their meanings.
+- Original-artifact exclusion, symlink rejection and unresolved-reference rejection.
+- Keyword results, one-based rank-fusion contributions, source-cycle and query/traversal bounds.
+- All five read-only MCP tools, including filtered work listing and rejection of arbitrary paths/URLs by the note reader.
 
-Run `python -m pytest -q` to repeat them. These tests do not require a model or
-network access after dependencies are installed.
+Run `python -m pytest -q` after the editable installation. The tests need no
+model or network access once dependencies are installed. They verify selected
+mechanics, not factual accuracy, complete access control or a full agent runtime.
 
-## Actual local embedding run
+## Actual local semantic run
 
-The semantic adapter was also run with cached `all-MiniLM-L6-v2` weights at the
-revision pinned in `retrieval.py`, with model downloads disabled.
+The semantic adapter ran with cached `all-MiniLM-L6-v2` weights at the revision
+pinned in `retrieval.py`, with model downloads disabled:
 
-Query: **Why retain the ability to adjust individual musical parts?**
+```bash
+knowledge-demo --semantic --local-only --query 'What prevents approval of the pilot brief?'
+```
 
 | Result | Keyword rank | Semantic rank | Fused rank |
 | --- | --- | --- | --- |
-| editability-principle | 1 | 1 | 1 |
-| session-decisions | 2 | 3 | 2 |
-| room-observation | 5 | 2 | 3 |
-| session-record | 3 | 4 | 4 |
-| export-checklist | 4 | 6 | 5 |
+| pilot-brief | 1 | 3 | 1 |
+| backlog-brief | 3 | 2 | 2 |
+| goal-reviewable-pilot | 7 | 1 | 3 |
+| pilot-review | 4 | 4 | 4 |
+| pilot-kickoff | 2 | 7 | 5 |
 
-The first two results are useful for the question. The room observation is not
-good evidence for the decision, despite ranking third. Similar language can
-still produce an unhelpful match. The lexical index also counts common words.
+The draft brief appears first. The latest curated update does not appear in the
+top five. That is an important limit: a plausible ranking is not a complete
+answer about current state. Following the brief's declared supporting sources
+reaches that update and the partial process run. A reporting workflow must read
+those sources and check dates before answering.
 
-This observation is a reason to inspect sources and evaluate with a larger
-permitted query set, not a reason to claim perfect hybrid retrieval. There is no
-calibrated relevance threshold, measured recall improvement or production-scale
-performance claim in this example. The graph's explicit source links help a
-reader check provenance; they cannot make an irrelevant search result correct.
+This small adapter does not apply the larger system's tier or recency policies.
+The lexical index counts common words and the semantic model has no calibrated
+relevance threshold here. One query is an observed run, not a benchmark. No
+recall improvement, productivity gain or production-scale performance is claimed.
+
+## Scope of the release review
+
+The selected public tree was checked for broken local links, accidental private
+paths, common credential patterns, client terms and non-allowlisted files. The
+records are newly authored fiction. Pattern checks supplement manual review;
+they cannot establish ownership or guarantee that every sensitive string would
+be detected in a different corpus.

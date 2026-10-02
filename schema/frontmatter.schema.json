@@ -1,0 +1,410 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PKM Front Matter Schema",
+  "description": "Frontmatter validation for a PKM system. Only include fields when data is known; omit unknown keys entirely.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "status"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The note title"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Date in YYYY-MM-DD format"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "meeting",
+        "conversation",
+        "research",
+        "reflection",
+        "deliverable",
+        "notes",
+        "atomic",
+        "curated",
+        "raw",
+        "email",
+        "transcript",
+        "chat",
+        "llm",
+        "reference",
+        "context-source",
+        "presentation",
+        "article",
+        "frontend",
+        "backend",
+        "fullstack",
+        "infrastructure",
+        "testing",
+        "goal",
+        "backlog-item",
+        "work-item",
+        "process",
+        "process-run",
+        "architecture-pattern",
+        "term",
+        "entity",
+        "index"
+      ],
+      "description": "The type of document"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "raw",
+        "curated",
+        "atomic",
+        "draft",
+        "drafting",
+        "published",
+        "done",
+        "in-progress",
+        "not-started",
+        "blocked",
+        "active",
+        "deferred",
+        "archived",
+        "maintained",
+        "proposed",
+        "accepted",
+        "merged",
+        "recorded",
+        "deprecated"
+      ],
+      "description": "Processing status in the PKM pipeline or object lifecycle"
+    },
+    "id": {
+      "type": "string",
+      "description": "Stable identifier for first-class objects such as processes, patterns, goals, and backlog items"
+    },
+    "project": {
+      "type": "string",
+      "enum": [
+        "knowledge-pilot"
+      ],
+      "description": "Fictional workstream in this public template. Customize for a permitted workspace."
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "technical",
+        "process",
+        "business"
+      ],
+      "description": "High-level content domain used by search filters"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of relevant tags for discovery"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief description of content"
+    },
+    "aliases": {
+      "type": "array",
+      "description": "Alternative names, acronyms, or search terms",
+      "items": {
+        "type": "string"
+      }
+    },
+    "origin": {
+      "type": "string",
+      "description": "Relative path to source file for lineage tracking"
+    },
+    "related": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Relative paths, IDs, or labels for related knowledge objects"
+    },
+    "supporting": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional supporting source files"
+    },
+    "contributors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of contributor names"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system, repository, or method"
+    },
+    "source_repo": {
+      "type": "string",
+      "description": "Repository origin for synced reference docs"
+    },
+    "source_path": {
+      "type": "string",
+      "description": "Original path within the source repository or system"
+    },
+    "owner": {
+      "type": "string",
+      "description": "Primary owner for a process, pattern, work item, or reference object"
+    },
+    "role": {
+      "type": "string",
+      "description": "Role or title for a person or entity record"
+    },
+    "org": {
+      "type": "string",
+      "description": "Organization for a person or entity record"
+    },
+    "reports_to": {
+      "type": "string",
+      "description": "Manager or reporting relationship for a person record"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version or human-managed version label"
+    },
+    "last_verified": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Date this object was last verified"
+    },
+    "verified_by": {
+      "type": "string",
+      "description": "Person or role that verified this object"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "description": "Confidence in the documented object"
+    },
+    "review_interval": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "quarterly",
+        "release-driven",
+        "as-needed"
+      ],
+      "description": "Expected review cadence"
+    },
+    "evidence_window": {
+      "type": "string",
+      "description": "Evidence date range or scope used to verify the object"
+    },
+    "process_id": {
+      "type": "string",
+      "description": "Stable process identifier for process definitions or recorded process runs"
+    },
+    "parent_process": {
+      "type": "string",
+      "description": "Parent process ID when this process rolls up into a broader workflow"
+    },
+    "workflow_class": {
+      "type": "string",
+      "description": "Class of workflow, such as client-delivery, internal-operations, product, or research"
+    },
+    "run_outcome": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "partial",
+        "blocked",
+        "failed"
+      ],
+      "description": "Observed outcome for a recorded process run"
+    },
+    "pattern_category": {
+      "type": "string",
+      "description": "Architecture pattern family, such as orchestration, memory, evaluation, routing, or tool-use"
+    },
+    "pattern_context": {
+      "type": "string",
+      "description": "Situation where an architecture pattern applies"
+    },
+    "pattern_problem": {
+      "type": "string",
+      "description": "Problem addressed by an architecture pattern"
+    },
+    "pattern_solution": {
+      "type": "string",
+      "description": "Short summary of the pattern solution"
+    },
+    "pattern_forces": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tradeoffs or constraints shaping an architecture pattern"
+    },
+    "related_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Related architecture pattern IDs or paths"
+    },
+    "anti_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Known anti-patterns or failure modes"
+    },
+    "name": {
+      "type": "string",
+      "description": "Canonical name for term or entity records"
+    },
+    "full_name": {
+      "type": "string",
+      "description": "Expanded name for term or entity records"
+    },
+    "notation": {
+      "type": "string",
+      "description": "Notation, acronym, or symbolic form for a term"
+    },
+    "entity_type": {
+      "type": "string",
+      "description": "Type of entity or term, such as concept, artifact, system, role, standard, tool, or pattern"
+    },
+    "bounded_context": {
+      "type": "string",
+      "description": "Domain context where a term or pattern is used"
+    },
+    "hidden_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Search labels that should resolve to this term but not appear as primary aliases"
+    },
+    "alternative_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Alternative labels for a term or pattern"
+    },
+    "broader": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Broader term references"
+    },
+    "narrower": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Narrower term references"
+    },
+    "part_of": {
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "description": "Parent concept, pattern, or system"
+    },
+    "contains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Child concepts, pattern parts, or contained systems"
+    },
+    "used_in_processes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Process IDs where a term or pattern is used"
+    },
+    "goal_id": {
+      "type": "string",
+      "description": "Goal identifier for a backlog item or linked work object"
+    },
+    "goal": {
+      "type": "string",
+      "description": "Relative path to the parent goal file"
+    },
+    "parent_goal_id": {
+      "type": "string",
+      "description": "Identifier of the parent goal"
+    },
+    "parent_goal": {
+      "type": "string",
+      "description": "Relative path to the parent goal file"
+    },
+    "related_goals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional goal paths or IDs this object supports"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Known blockers or constraints"
+    },
+    "execution_profile": {
+      "type": "string",
+      "description": "Preferred execution profile for the work"
+    },
+    "destination": {
+      "type": "string",
+      "description": "Preferred downstream surface or destination"
+    },
+    "scheduled_for": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Target date for a backlog item or planning object"
+    },
+    "last_updated": {
+      "type": "string",
+      "description": "Last update date for living documents"
+    },
+    "depends_on": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of objects this item depends on"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "description": "Planning priority"
+    },
+    "target": {
+      "type": "string",
+      "pattern": "^(\\d{4}-\\d{2}-\\d{2}|\\d{4}-W\\d{2})$",
+      "description": "Target date (YYYY-MM-DD) or target week (YYYY-Wnn)"
+    }
+  }
+}
